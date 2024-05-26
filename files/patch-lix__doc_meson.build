@@ -1,0 +1,10 @@
+--- lix-doc/meson.build.orig	2024-05-25 18:13:14.162571000 +0200
++++ lix-doc/meson.build		2024-05-25 18:22:23.397473000 +0200
+@@ -0,0 +1,7 @@
++#rust_lib = static_library(
++#    'rust_lib',
++#    sources : 'src/lib.rs',
++#    #...
++#)
++run_command('cargo', 'build', '--release', env: {'RUSTFLAGS': '-C default_linker_libraries'}, check: true).stdout()
++#print(cmd.stdout().strip())

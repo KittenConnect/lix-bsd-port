@@ -1,0 +1,8 @@
+--- misc/meson.build.orig	2024-05-25 19:30:58.072628000 +0200
++++ misc/meson.build	2024-05-25 19:32:17.048985000 +0200
+@@ -2,4 +2,4 @@
+ subdir('fish')
+ subdir('zsh')
+ 
+-subdir('systemd')
++#subdir('systemd')

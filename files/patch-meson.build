@@ -1,0 +1,63 @@
+--- meson.build.orig	2024-05-06 02:37:42.000000000 +0200
++++ meson.build		2024-05-25 18:51:25.844199000 +0200
+@@ -88,6 +88,8 @@
+ doxygen = find_program('doxygen', required : enable_internal_api_docs, native : true)
+ bash = find_program('bash', native : true)
+ 
++cargo = find_program('cargo', required : true, native : true)
++
+ rapidcheck_meson = dependency('rapidcheck', required : enable_internal_api_docs)
+ 
+ if enable_internal_api_docs.enabled()
+@@ -138,6 +140,7 @@
+ 
+ is_linux = host_machine.system() == 'linux'
+ is_darwin = host_machine.system() == 'darwin'
++is_bsd = host_machine.system().contains('bsd')
+ is_x64 = host_machine.cpu_family() == 'x86_64'
+ 
+ # Per-platform arguments that you should probably pass to shared_module() invocations.
+@@ -146,7 +149,7 @@
+ # This corresponds to the $(1)_ALLOW_UNDEFINED option from the Make buildsystem.
+ # Mostly this is load-bearing on the plugin tests defined in tests/functional/plugins/meson.build.
+ shared_module_link_args = []
+-if is_darwin
++if is_darwin or is_bsd
+   shared_module_link_args += ['-undefined', 'suppress', '-flat_namespace']
+ elif is_linux
+   # -Wl,-z,defs is the equivalent, but a comment in the Make buildsystem says that breaks
+@@ -292,7 +295,7 @@
+ #
+ # Build-time tools
+ #
+-coreutils = find_program('coreutils', native : true)
++coreutils = find_program('coreutils', required : false, native : true)
+ dot = find_program('dot', required : false, native : true)
+ pymod = import('python')
+ python = pymod.find_installation('python3')
+@@ -426,10 +429,16 @@
+   # b_sanitize=signed-integer-overflow is ignored, and
+   # -fsanitize-undefined-trap-on-error is not representable.
+   sanitize_args = ['-fsanitize=signed-integer-overflow', '-fsanitize-undefined-trap-on-error']
++
+   add_project_arguments(sanitize_args, language: 'cpp')
+   add_project_link_arguments(sanitize_args, language: 'cpp')
+ endif
+ 
++add_project_link_arguments(['-L/usr/local/lib', '-L/usr/ports/sysutils/lix/work/lix/lix-doc/target/release',
++
++  '-Wl,-z,undefs'
++  ], language : 'cpp')
++
+ add_project_link_arguments('-pthread', language : 'cpp')
+ if cxx.get_linker_id() in ['ld.bfd', 'ld.gold']
+   add_project_link_arguments('-Wl,--no-copy-dt-needed-entries', language : 'cpp')
+@@ -466,6 +475,8 @@
+     install_dir : prefix / 'Library/LaunchDaemons',
+   )
+ endif
++
++subdir('lix-doc')
+ 
+ subdir('src')
+ subdir('scripts')
