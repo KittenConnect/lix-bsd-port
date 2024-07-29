@@ -5,8 +5,8 @@
 Experimental support
 --------------------
 
-Lix (Like Nix) support is very much experimental on FreeBSD. The sysutils/lix port 
-is mainly aimed at developers, testers, and curious users. Lix & Nix should not be
+Nix support is very much experimental on FreeBSD. The sysutils/nix port is
+mainly aimed at developers, testers, and curious users. Nix should not be
 considered stable yet on FreeBSD.
 
 Creating Nix build users
