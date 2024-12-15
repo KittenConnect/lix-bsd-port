@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# PROVIDE: nix-daemon
+# REQUIRE: FILESYSTEMS tempfiles
+# DESCRIPTION: nix daemon for a multi-user store
+
+. /etc/rc.subr
+
+name="nix_daemon"
+rcvar="nix_daemon_enable"
+#export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+command="/usr/sbin/daemon"
+command_args="-p /var/run/nix_daemon.pid -H -o /var/log/nix-daemon.log %%PREFIX%%/bin/nix-daemon"
+procname="%%PREFIX%%/bin/nix-daemon"
+pidfile="/var/run/nix_daemon.pid"
+stop_precmd="nix_daemon_stop_precmd"
+
+
+nix_daemon_stop_precmd() {
+kill -INT $(cat $pidfile) &>/dev/null || true
+
+}
+
+
+load_rc_config "$NAME" 
+run_rc_command "$1"
+

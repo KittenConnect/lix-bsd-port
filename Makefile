@@ -1,6 +1,6 @@
 PORTNAME=	nix
-DISTVERSION=	2.18.2
-PORTREVISION=	2
+DISTVERSION=	2.18.5
+PORTREVISION=	4
 CATEGORIES=	sysutils
 
 MAINTAINER=	ashish@FreeBSD.org
@@ -9,6 +9,8 @@ WWW=		https://nixos.org/nix/
 
 LICENSE=	LGPL21
 LICENSE_FILE=	${WRKSRC}/COPYING
+
+USE_RC_SUBR=	nix_daemon
 
 BUILD_DEPENDS=	${LOCALBASE}/share/aclocal/ax_cxx_compile_stdcxx.m4:devel/autoconf-archive \
 		gsed:textproc/gsed \
@@ -134,6 +136,9 @@ post-patch:
 post-install:
 	@${MKDIR} ${STAGEDIR}${DATADIR}
 	${INSTALL_SCRIPT} ${FILESDIR}/add-nixbld-users ${STAGEDIR}${DATADIR}
+
+	@${MKDIR} ${STAGEDIR}${ETCDIR}
+	${INSTALL_SCRIPT} -m 640 ${FILESDIR}/nix.conf.sample ${STAGEDIR}${ETCDIR}
 
 	@${RM} ${STAGEDIR}${PREFIX}/libexec/nix/build-remote
 	@${RLN} ${STAGEDIR}${PREFIX}/bin/nix ${STAGEDIR}${PREFIX}/libexec/nix/build-remote
